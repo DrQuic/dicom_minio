@@ -16,6 +16,16 @@ x-common: &config
     timeout: 20s 
     retries: 3
 services: 
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+    - POSTGRES_PASSWORD=password
+    - POSTGRES_DB=test
+    ports:
+      - "5432:5432"
+    
   minio1:
     <<: *config
     hostname: minio1

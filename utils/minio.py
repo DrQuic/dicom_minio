@@ -5,27 +5,27 @@ from uuid import uuid4
 
 class MinioUtil:
     def __init__(self):
-        minio_settings: Settings = get_settings()
+        settings: Settings = get_settings()
         self.client = Minio(
-            endpoint=minio_settings.miniouri,
-            access_key=minio_settings.miniokey,
-            secret_key=minio_settings.miniosecret,
+            endpoint=settings.miniouri,
+            access_key=settings.miniokey,
+            secret_key=settings.miniosecret,
             secure=False
         )
         print("getting here")
-        found = self.client.bucket_exists(minio_settings.miniobucket)
+        found = self.client.bucket_exists(settings.miniobucket)
         print(f'Bucket was found {found}')
         if not found:
-            self.client.make_bucket(minio_settings.miniobucket)
+            self.client.make_bucket(settings.miniobucket)
         else:
-            print(f'Bucket {minio_settings.miniobucket} exists!')
+            print(f'Bucket {settings.miniobucket} exists!')
         
-        self.minio_settings = minio_settings
+        self.settings = settings
 
     def store_png(self, file: UploadFile) -> any:
         file_id = uuid4()
         response = self.client.put_object(
-            bucket_name=self.minio_settings.miniobucket,
+            bucket_name=self.settings.miniobucket,
             object_name=f'{file_id}.{file.filename.split(".")[-1]}',
             data=file.file,
             length=file.size
@@ -36,6 +36,7 @@ class MinioUtil:
 minio = None
 
 def connect_minio():
+    print("RUNNING connect to minio")
     global minio
     minio = MinioUtil()
 
